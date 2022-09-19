@@ -79,6 +79,8 @@ bool TrajOptPlanner::solve(PlannerResponse& response, const TrajOptPlannerConfig
   opt.setParameters(config.params);
   opt.initialize(trajToDblVec(config.prob->GetInitTraj()));
 
+  ROS_INFO("Initializing planner...");
+
   // Add all callbacks
   for (const sco::Optimizer::Callback& callback : config.callbacks)
   {

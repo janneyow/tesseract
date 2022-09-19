@@ -220,9 +220,8 @@ bool KDLJointKin::checkJoints(const Eigen::Ref<const Eigen::VectorXd>& vec) cons
 {
   if (static_cast<unsigned>(vec.size()) != joint_list_.size())
   {
-    ROS_ERROR("Number of joint angles (%d) don't match robot_model (%d)",
-              static_cast<unsigned>(vec.size()),
-              joint_list_.size());
+    ROS_ERROR_STREAM("Number of joint angles " << static_cast<unsigned>(vec.size()) <<
+              " don't match robot_model: " << joint_list_.size());
     return false;
   }
 
@@ -270,13 +269,12 @@ bool KDLJointKin::init(urdf::ModelInterfaceConstSharedPtr model,
 
   if (model == nullptr)
   {
-    ROS_ERROR_STREAM("Null pointer to URDF Model");
+    ROS_ERROR("Null pointer to URDF Model");
     return false;
   }
 
   model_ = model;
   name_ = name;
-
   if (!model_->getRoot())
   {
     ROS_ERROR("Invalid URDF in ROSKin::init call");
@@ -294,7 +292,6 @@ bool KDLJointKin::init(urdf::ModelInterfaceConstSharedPtr model,
     ROS_ERROR("Joint names must not be empty!");
     return false;
   }
-
   joint_list_.resize(joint_names.size());
   joint_limits_.resize(static_cast<long int>(joint_names.size()), 2);
   joint_qnr_.resize(joint_names.size());
@@ -326,8 +323,15 @@ bool KDLJointKin::init(urdf::ModelInterfaceConstSharedPtr model,
     joint_qnr_[j] = static_cast<int>(tree_element.second.q_nr);
 
     urdf::JointConstSharedPtr joint = model_->getJoint(jnt.getName());
-    joint_limits_(j, 0) = joint->limits->lower;
-    joint_limits_(j, 1) = joint->limits->upper;
+    // world joint for xarm is a fixed joint, set limits to 0
+    if (joint->type == urdf::Joint::FIXED){
+      joint_limits_(j, 0) = 0;
+      joint_limits_(j, 1) = 0;
+    }
+    else {
+      joint_limits_(j, 0) = joint->limits->lower;
+      joint_limits_(j, 1) = joint->limits->upper;
+    }
 
     // Need to set limits for continuous joints. TODO: This may not be required
     // by the optization library but may be nice to have
@@ -337,7 +341,7 @@ bool KDLJointKin::init(urdf::ModelInterfaceConstSharedPtr model,
       joint_limits_(j, 0) = -4 * M_PI;
       joint_limits_(j, 1) = +4 * M_PI;
     }
-    ++j;
+    ++j;  
   }
 
   assert(joint_names.size() == joint_list_.size());
