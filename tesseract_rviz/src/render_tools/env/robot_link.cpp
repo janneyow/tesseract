@@ -213,7 +213,7 @@ RobotLink::RobotLink(Robot* robot,
   std::stringstream ss;
   static int count = 1;
   ss << "robot link color material " << count++;
-  color_material_ = Ogre::MaterialManager::getSingleton().create(ss.str(), "rviz");
+  color_material_ = Ogre::MaterialManager::getSingleton().create(ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   color_material_->setReceiveShadows(false);
   color_material_->getTechnique(0)->setLightingEnabled(true);
 
@@ -362,7 +362,7 @@ RobotLink::RobotLink(Robot* robot,
   std::stringstream ss;
   static int count = 1;
   ss << "attached link color material " << count++;
-  color_material_ = Ogre::MaterialManager::getSingleton().create(ss.str(), "rviz");
+  color_material_ = Ogre::MaterialManager::getSingleton().create(ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   color_material_->setReceiveShadows(false);
   color_material_->getTechnique(0)->setLightingEnabled(true);
 
@@ -602,7 +602,7 @@ Ogre::MaterialPtr RobotLink::getMaterialForLink(const urdf::LinkConstSharedPtr& 
   std::stringstream ss;
   ss << "Robot Link Material" << count++;
 
-  Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(ss.str(), "rviz");
+  Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   mat->getTechnique(0)->setLightingEnabled(true);
 
   urdf::VisualSharedPtr visual = link->visual;
@@ -683,7 +683,7 @@ Ogre::MaterialPtr RobotLink::getMaterialForAttachedLink(const Eigen::Vector4d co
   std::stringstream ss;
   ss << "Robot Attached Link Material" << count++;
 
-  Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(ss.str(), "rviz");
+  Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create(ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   mat->getTechnique(0)->setLightingEnabled(true);
 
   bool has_texture_file = false;
