@@ -83,6 +83,23 @@ public:
     trajectory_pub_.publish(msg);
   }
 
+  tesseract_msgs::Trajectory getTrajectory(const std::vector<std::string>& joint_names, const Eigen::Ref<const TrajArray>& traj)
+  {
+    tesseract_msgs::Trajectory msg;
+
+    // Set the model id
+    msg.model_id = env_->getURDF()->getName();
+
+    // Set the Robot State so attached objects show up
+    tesseract_ros::tesseractToTesseractStateMsg(msg.trajectory_start, *env_);
+
+    // Set the joint trajectory message
+    tesseract_ros::tesseractTrajectoryToJointTrajectoryMsg(
+        msg.joint_trajectory, joint_names, traj);
+
+    return msg;
+  }
+
   void plotContactResults(const std::vector<std::string>& link_names,
                           const ContactResultVector& dist_results,
                           const Eigen::Ref<const Eigen::VectorXd>& safety_distances) override
